@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yufeng.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.yufeng.domain.po.User">
+            <id property="id" column="id" />
+            <result property="nickname" column="nickname" />
+            <result property="username" column="username" />
+            <result property="password" column="password" />
+            <result property="avatar" column="avatar" />
+            <result property="gender" column="gender" />
+            <result property="email" column="email" />
+            <result property="status" column="status" />
+            <result property="auth" column="auth" />
+            <result property="deleteFlag" column="delete_flag" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,nickname,username,password,avatar,gender,
+        email,status,auth,delete_flag
+    </sql>
+</mapper>
