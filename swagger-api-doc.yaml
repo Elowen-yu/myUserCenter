@@ -1,0 +1,370 @@
+openapi: 3.0.3
+info:
+  title: 用户中心 API
+  description: 用户中心后端系统的完整API接口文档
+  version: 1.0.0
+  contact:
+    name: yufeng
+    email: yufeng@example.com
+
+servers:
+  - url: http://localhost:8080
+    description: 开发环境
+
+paths:
+  /user/register:
+    post:
+      tags:
+        - 用户管理
+      summary: 用户注册
+      description: 用户注册接口，需要提供用户名、密码和确认密码
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUser'
+            example:
+              username: "testuser"
+              password: "123456"
+              checkPassword: "123456"
+      responses:
+        '200':
+          description: 注册成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                code: 0
+                message: "success"
+                description: " "
+                data: 123456
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                code: 4000
+                message: "请求参数错误"
+                description: "用户名不能为空"
+                data: null
+
+  /user/login:
+    post:
+      tags:
+        - 用户管理
+      summary: 用户登录
+      description: 用户登录接口，登录成功后会返回用户信息和会话信息
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUser'
+            example:
+              username: "testuser"
+              password: "123456"
+      responses:
+        '200':
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/VoUser'
+              example:
+                code: 0
+                message: "success"
+                description: " "
+                data:
+                  id: 123456
+                  nickname: "用户昵称"
+                  username: "testuser"
+                  avatar: "头像URL"
+                  gender: 1
+                  email: "test@example.com"
+                  status: 0
+                  auth: 0
+                  deleteFlag: 0
+        '401':
+          description: 登录失败
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                code: 40100
+                message: "未登录"
+                description: "用户名或密码错误"
+                data: null
+
+  /user/search:
+    get:
+      tags:
+        - 用户管理
+      summary: 用户查询
+      description: 根据用户名查询用户信息，支持模糊匹配
+      parameters:
+        - name: username
+          in: query
+          required: true
+          description: 用户名，支持模糊查询
+          schema:
+            type: string
+          example: "test"
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/VoUser'
+              example:
+                code: 0
+                message: "success"
+                description: " "
+                data:
+                  - id: 123456
+                    nickname: "用户昵称"
+                    username: "testuser"
+                    avatar: "头像URL"
+                    gender: 1
+                    email: "test@example.com"
+                    status: 0
+                    auth: 0
+                    deleteFlag: 0
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+
+  /user/delete:
+    delete:
+      tags:
+        - 用户管理
+      summary: 用户删除
+      description: 根据用户ID删除用户（逻辑删除）
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: 要删除的用户ID
+          schema:
+            type: integer
+            format: int64
+          example: 123456
+      responses:
+        '200':
+          description: 删除成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: boolean
+              example:
+                code: 0
+                message: "success"
+                description: " "
+                data: true
+        '401':
+          description: 无权限
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+
+  /user/logout:
+    post:
+      tags:
+        - 用户管理
+      summary: 用户登出
+      description: 用户登出接口，清除当前会话
+      responses:
+        '200':
+          description: 登出成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: integer
+                        format: int32
+              example:
+                code: 0
+                message: "success"
+                description: " "
+                data: 123456
+        '401':
+          description: 未登录
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+
+components:
+  schemas:
+    BaseResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: 状态码，0表示成功
+          example: 0
+        message:
+          type: string
+          description: 状态消息
+          example: "success"
+        description:
+          type: string
+          description: 详细描述
+          example: " "
+        data:
+          description: 响应数据
+      required:
+        - code
+        - message
+        - description
+
+    RegisterUser:
+      type: object
+      properties:
+        username:
+          type: string
+          description: 用户名
+          example: "testuser"
+        password:
+          type: string
+          description: 密码
+          example: "123456"
+        checkPassword:
+          type: string
+          description: 确认密码
+          example: "123456"
+      required:
+        - username
+        - password
+        - checkPassword
+
+    LoginUser:
+      type: object
+      properties:
+        username:
+          type: string
+          description: 用户名
+          example: "testuser"
+        password:
+          type: string
+          description: 密码
+          example: "123456"
+      required:
+        - username
+        - password
+
+    VoUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 用户ID
+          example: 123456
+        nickname:
+          type: string
+          description: 用户昵称
+          example: "用户昵称"
+        username:
+          type: string
+          description: 用户名
+          example: "testuser"
+        avatar:
+          type: string
+          description: 头像URL
+          example: "头像URL"
+        gender:
+          type: integer
+          description: 性别(1女2男)
+          enum: [1, 2]
+          example: 1
+        email:
+          type: string
+          description: 邮箱
+          example: "test@example.com"
+        status:
+          type: integer
+          description: 状态(0默认1封锁)
+          enum: [0, 1]
+          example: 0
+        auth:
+          type: integer
+          description: 权限(0默认1管理员)
+          enum: [0, 1]
+          example: 0
+        deleteFlag:
+          type: integer
+          description: 逻辑删除标识(0默认1已删除)
+          enum: [0, 1]
+          example: 0
+
+  responses:
+    Error400:
+      description: 请求参数错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            code: 4000
+            message: "请求参数错误"
+            description: "用户名不能为空"
+            data: null
+
+    Error401:
+      description: 未登录或无权限
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            code: 40100
+            message: "未登录"
+            description: "请先登录"
+            data: null
+
+    Error500:
+      description: 系统异常
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            code: 500
+            message: "系统异常"
+            description: "服务器内部错误"
+            data: null
+
+tags:
+  - name: 用户管理
+    description: 用户相关的所有操作接口 

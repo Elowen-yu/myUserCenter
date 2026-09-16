@@ -1,0 +1,186 @@
+{
+  "project": {
+    "name": "user-center-frontend",
+    "description": "用户中心前端系统",
+    "version": "1.0.0",
+    "author": "yufeng"
+  },
+  "technology": {
+    "framework": "Vue 3",
+    "buildTool": "Vite",
+    "uiLibrary": "Element Plus",
+    "router": "Vue Router 4",
+    "stateManagement": "Pinia",
+    "httpClient": "Axios",
+    "styling": "SCSS",
+    "language": "JavaScript"
+  },
+  "pages": [
+    {
+      "name": "Login",
+      "path": "/login",
+      "component": "Login.vue",
+      "requiresAuth": false,
+      "features": [
+        "用户名密码登录",
+        "表单验证",
+        "错误提示",
+        "跳转注册"
+      ]
+    },
+    {
+      "name": "Register", 
+      "path": "/register",
+      "component": "Register.vue",
+      "requiresAuth": false,
+      "features": [
+        "用户注册",
+        "密码确认",
+        "表单验证",
+        "跳转登录"
+      ]
+    },
+    {
+      "name": "Users",
+      "path": "/users", 
+      "component": "Users.vue",
+      "requiresAuth": true,
+      "features": [
+        "用户列表",
+        "搜索功能",
+        "删除用户",
+        "分页"
+      ]
+    },
+    {
+      "name": "Profile",
+      "path": "/profile",
+      "component": "Profile.vue", 
+      "requiresAuth": true,
+      "features": [
+        "个人信息",
+        "修改信息",
+        "登出"
+      ]
+    }
+  ],
+  "api": {
+    "baseURL": "http://localhost:8080",
+    "endpoints": {
+      "register": {
+        "method": "POST",
+        "path": "/user/register",
+        "description": "用户注册"
+      },
+      "login": {
+        "method": "POST", 
+        "path": "/user/login",
+        "description": "用户登录"
+      },
+      "search": {
+        "method": "GET",
+        "path": "/user/search", 
+        "description": "用户查询"
+      },
+      "delete": {
+        "method": "DELETE",
+        "path": "/user/delete",
+        "description": "用户删除"
+      },
+      "logout": {
+        "method": "POST",
+        "path": "/user/logout", 
+        "description": "用户登出"
+      }
+    }
+  },
+  "ui": {
+    "theme": {
+      "primary": "#409EFF",
+      "success": "#67C23A", 
+      "warning": "#E6A23C",
+      "danger": "#F56C6C",
+      "info": "#909399"
+    },
+    "layout": {
+      "responsive": true,
+      "breakpoints": {
+        "mobile": "< 768px",
+        "tablet": "768px - 1024px", 
+        "desktop": "> 1024px"
+      }
+    },
+    "components": {
+      "form": "Element Plus Form",
+      "table": "Element Plus Table",
+      "button": "Element Plus Button",
+      "input": "Element Plus Input",
+      "message": "Element Plus Message"
+    }
+  },
+  "state": {
+    "stores": [
+      {
+        "name": "user",
+        "state": [
+          "currentUser",
+          "isLoggedIn", 
+          "token"
+        ],
+        "actions": [
+          "login",
+          "logout",
+          "fetchCurrentUser"
+        ]
+      },
+      {
+        "name": "users",
+        "state": [
+          "users",
+          "loading",
+          "searchKeyword",
+          "pagination"
+        ],
+        "actions": [
+          "fetchUsers",
+          "searchUsers", 
+          "deleteUser"
+        ]
+      }
+    ]
+  },
+  "routing": {
+    "mode": "history",
+    "guards": {
+      "requiresAuth": true,
+      "redirectTo": "/login"
+    }
+  },
+  "projectStructure": {
+    "src": {
+      "api": "API接口文件",
+      "components": "公共组件",
+      "router": "路由配置",
+      "stores": "状态管理",
+      "styles": "全局样式",
+      "utils": "工具函数",
+      "views": "页面组件"
+    }
+  },
+  "development": {
+    "port": 3000,
+    "proxy": {
+      "/api": "http://localhost:8080"
+    },
+    "linting": {
+      "eslint": true,
+      "prettier": true
+    }
+  },
+  "browsers": [
+    "Chrome >= 88",
+    "Firefox >= 85", 
+    "Safari >= 14",
+    "Edge >= 88"
+  ]
+} 
